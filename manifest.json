@@ -1,0 +1,18 @@
+{
+  "manifest_version": 2,
+  "name": "最新电影提醒",
+  "version": "1.0",
+  "description": "通过66ys的数据获取最新的电影提醒",
+  "icons": {
+    "16": "images/66ys.png"
+  },
+  "browser_action": {
+    "default_icon": "images/66ys.png",
+    "default_title": "扩展已开启，每隔1小时检查更新",
+    "default_popup": "pop.html"
+  },
+  "background": {
+    "scripts": ["background/jquery.js", "background/check.js"]
+  },
+  "permissions": ["http://www.hao6v.com/*", "tabs", "notifications","storage"]
+}
