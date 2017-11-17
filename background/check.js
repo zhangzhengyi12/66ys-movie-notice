@@ -90,4 +90,4 @@ chrome.runtime.onMessage.addListener(function(message, sender, sendResponse) {
 
 check()
 
-setInterval(check, 600000) // 10分钟自动检查
+setInterval(check, 10800000) // 10分钟自动检查
