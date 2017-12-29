@@ -1,26 +1,10 @@
-function compose(...fns) {
-  return function composed(result) {
-    // 拷贝一份保存函数的数组
-    var list = fns.slice()
 
-    while (list.length > 0) {
-      // 将最后一个函数从列表尾部拿出
-      // 并执行它
-      result = list.pop()(result)
-    }
-
-    return result
-  }
-}
+const URI = 'http://api.laoliuscript.tk/api/getNewMovie'
 
 function _showDataOnPage(id, data, link) {
   //显示一个桌面通知
   if (window.webkitNotifications) {
-    var notification = window.webkitNotifications.createNotification(
-      'images/icon16.png',
-      '我是标题',
-      data
-    )
+    var notification = window.webkitNotifications.createNotification('images/icon16.png', '我是标题', data)
     notification.show()
     setTimeout(function() {
       notification.cancel()
@@ -49,45 +33,44 @@ function _showDataOnPage(id, data, link) {
 function ajaxPromisify(url) {
   return new Promise((resolve, reject) => {
     $.ajax({
-      url: 'http://www.hao6v.com/gvod/zx.html',
+      url: 'http://api.laoliuscript.tk/api/getNewMovie',
       success: resolve
     })
   })
 }
 
-function getListDOMText(DOMText) {
-  let getList = /<ul class="list" style="border:0;">([\s\S]*)<\/ul>/i
-  return DOMText.match(getList)
-}
 
-function updateLocalStorge(DOMText) {
-  let lastData = localStorage.movie ? localStorage.movie : ''
-  if (DOMText != lastData) {
-    localStorage.movie = DOMText
-    _showDataOnPage(100, '有新电影更新拉！', 'http://www.6vhao.com')
+
+function updateLocalStorge(data) {
+  let lastData = localStorage.movie ? JSON.parse(localStorage.movie) : {time:null,list:[{title:''}]}
+  if (lastData.list[0].title != data.list[0].title) {
+    lastData.movie = JSON.stringify(data)
+    _showDataOnPage('有新电影了')
   }
-  return DOMText
+  return data
 }
 
-let composeManage = compose(updateLocalStorge, getListDOMText)
+function stringify(obj) {
+  return JSON.stringify(obj) 
+}
+
 
 function check() {
-  ajaxPromisify('http://www.hao6v.com/gvod/zx.html').then(res => {
-    composeManage(res)
+  ajaxPromisify(URI).then(res => {
+    updateLocalStorge(res)
   })
 }
 
+
+
 chrome.runtime.onMessage.addListener(function(message, sender, sendResponse) {
   if (message === 'NEW') {
-    ajaxPromisify('http://www.hao6v.com/gvod/zx.html').then(res => {
+    ajaxPromisify(URI).then(res => {
       _showDataOnPage(100, '数据已刷新', 'www.laoliuscript.tk')
-      chrome.runtime.sendMessage(composeManage(res), function(response) {})
     })
-  } else if (message === 'OLD') {
-    chrome.runtime.sendMessage(localStorage.movie, function(response) {})
   }
 })
 
 check()
 
-setInterval(check, 10800000) // 10分钟自动检查
+setInterval(check, 108000) // 10分钟自动检查

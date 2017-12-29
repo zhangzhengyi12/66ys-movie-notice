@@ -14,5 +14,5 @@
   "background": {
     "scripts": ["background/jquery.js", "background/check.js"]
   },
-  "permissions": ["http://www.hao6v.com/*", "tabs", "notifications","storage"]
+  "permissions": ["http://www.hao6v.com/*", "http://api.laoliuscript.tk/*", "tabs", "notifications", "storage"]
 }
